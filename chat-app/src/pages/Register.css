@@ -1,0 +1,8 @@
+#main-container {
+  place-items: center center;
+}
+
+#register-form {
+  max-width: 380px;
+  background: #f8fafe;
+}
