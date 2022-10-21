@@ -6,3 +6,9 @@
   max-width: 380px;
   background: #f8fafe;
 }
+
+.error {
+  color: #db2269;
+  font-size: 0.813em;
+  display: relative;
+}
