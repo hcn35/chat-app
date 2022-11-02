@@ -7,7 +7,12 @@
 }
 
 body {
-  background: #e9effd;
+  background: #e6eef0;
+  display: grid;
+  min-height: 100vh;
+}
+
+.App {
   display: grid;
   min-height: 100vh;
 }
