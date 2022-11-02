@@ -11,9 +11,6 @@ function Chat({ signOutFunction, userInfo }) {
   const [contacts, setContacts] = useState([]);
   const [currentChat, setCurrentChat] = useState(undefined);
 
-  const { REACT_APP_USER_ENDPOINT } = process.env;
-  console.log("REACT_APP_USER_ENDPOINT", REACT_APP_USER_ENDPOINT);
-
   const getUsers = async () => {
     const response = await fetch(`${process.env.REACT_APP_USER_ENDPOINT}`, {
       method: "GET",
