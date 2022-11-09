@@ -3,12 +3,20 @@ import styled from "styled-components";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { IoMdSend } from "react-icons/io";
 
-function ChatInput() {
+function ChatInput({ handleSendMessage }) {
   const [msg, setMsg] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const handleEmojiPickerhideShow = () => {
     setShowEmojiPicker(!showEmojiPicker);
   };
+  const sendChat = (event) => {
+    event.preventDefault();
+    if (msg.length > 0) {
+      handleSendMessage(msg);
+      setMsg("");
+    }
+  };
+
   return (
     <Container>
       <div className="button-container">
@@ -18,7 +26,7 @@ function ChatInput() {
         </div>
       </div>
       {/* <form className="input-container" onSubmit={(event) => sendChat(event)}> */}
-      <form className="input-container">
+      <form className="input-container" onSubmit={(event) => sendChat(event)}>
         <input
           type="text"
           placeholder="type your message here"

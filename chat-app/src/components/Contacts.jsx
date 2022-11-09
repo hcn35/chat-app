@@ -10,8 +10,6 @@ function Contacts({ contacts, changeChat }) {
     changeChat(contact);
   };
 
-  console.log(contacts);
-
   return (
     <Container>
       <div className="brand">
@@ -99,6 +97,7 @@ const Container = styled.div`
       .username {
         h4 {
           color: white;
+          margin: 0;
         }
       }
     }

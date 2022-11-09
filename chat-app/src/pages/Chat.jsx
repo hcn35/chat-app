@@ -27,6 +27,9 @@ function Chat({ signOutFunction, userInfo }) {
     });
   }, []);
 
+  console.log("contacts", contacts?.at(1)?.userId);
+  console.log("userInfo", userInfo.attributes.sub);
+
   useEffect(() => {
     fetch(
       `${process.env.REACT_APP_USER_ENDPOINT}` +
@@ -67,7 +70,11 @@ function Chat({ signOutFunction, userInfo }) {
           {currentChat === undefined ? (
             <Welcome userName={dbUserInfo.userName} />
           ) : (
-            <ChatContainer currentChat={currentChat} handleClick={logOut} />
+            <ChatContainer
+              currentChat={currentChat}
+              currentUser={dbUserInfo}
+              handleClick={logOut}
+            />
           )}
         </div>
       </Container>

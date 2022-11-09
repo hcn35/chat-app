@@ -3,18 +3,54 @@ import styled from "styled-components";
 import Logout from "./Logout";
 import ChatInput from "./ChatInput";
 
-function ChatContainer({ currentChat, handleClick }) {
+function ChatContainer({ currentChat, currentUser, handleClick }) {
   console.log("currentChat", currentChat);
+  console.log("currentUser", currentUser);
+  //create a function to get all messages
+  const getMessages = async () => {
+    const response = await fetch(`${process.env.REACT_APP_MESSAGE_ENDPOINT}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.json();
+  };
+  const generateMessageId = async () => {
+    const messages = await getMessages();
+    const largestMessageId = messages.messages.reduce((acc, message) => {
+      if (message.messageId > acc) {
+        acc = message.messageId;
+      }
+      return acc;
+    }, 0);
+    return largestMessageId + 1;
+  };
+
+  const handleSendMessage = async (message) => {
+    const response = await fetch(`${process.env.REACT_APP_MESSAGE_ENDPOINT}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messageId: await generateMessageId(),
+        message,
+        sender: currentUser.userId,
+        receiver: currentChat.userId,
+      }),
+    });
+    const data = await response.json();
+    console.log("data", data);
+  };
+
   return (
     <Container>
       <div className="chat-header">
         <div className="user-details">
-          {/* <div className="avatar">
-            <img
-              src={`data:image/svg+xml;base64,${currentChat.avatarImage}`}
-              alt=""
-            />
-          </div> */}
+          <div className="avatar">
+            <img src={`${currentChat.avatar}`} alt="" />
+          </div>
           <div className="username">
             <h3>{currentChat.userName}</h3>
           </div>
@@ -22,7 +58,7 @@ function ChatContainer({ currentChat, handleClick }) {
         <Logout handleClick={handleClick} />
       </div>
       <div className="chat-messages"></div>
-      <ChatInput />
+      <ChatInput handleSendMessage={handleSendMessage} />
     </Container>
   );
 }
@@ -43,15 +79,16 @@ const Container = styled.div`
     .user-details {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.5rem;
       .avatar {
         img {
-          height: 3rem;
+          height: 2.5rem;
         }
       }
       .username {
         h3 {
           color: white;
+          margin: 0;
         }
       }
     }
