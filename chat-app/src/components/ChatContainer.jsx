@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Logout from "./Logout";
 import ChatInput from "./ChatInput";
 
 function ChatContainer({ currentChat, currentUser, handleClick }) {
-  console.log("currentChat", currentChat);
-  console.log("currentUser", currentUser);
-  //create a function to get all messages
+  const [messages, setMessages] = useState([]);
+  useEffect(() => {
+    getMessagesBetweenUsers(currentUser.userId, currentChat.userId).then(
+      (data) => {
+        setMessages(data);
+      }
+    );
+  }, [currentChat]);
+
+  console.log("messages", messages);
+
   const getMessages = async () => {
     const response = await fetch(`${process.env.REACT_APP_MESSAGE_ENDPOINT}`, {
       method: "GET",
@@ -38,10 +46,21 @@ function ChatContainer({ currentChat, currentUser, handleClick }) {
         message,
         sender: currentUser.userId,
         receiver: currentChat.userId,
+        createdAt: new Date().toISOString(),
       }),
     });
     const data = await response.json();
-    console.log("data", data);
+  };
+
+  const getMessagesBetweenUsers = async (sender, receiver) => {
+    const messages = await getMessages();
+    const messagesBetweenUsers = messages.messages.filter(
+      (message) =>
+        (message.sender === sender && message.receiver === receiver) ||
+        (message.sender === receiver && message.receiver === sender)
+    );
+    messagesBetweenUsers.sort((a, b) => a.messageId - b.messageId);
+    return messagesBetweenUsers;
   };
 
   return (
@@ -57,7 +76,18 @@ function ChatContainer({ currentChat, currentUser, handleClick }) {
         </div>
         <Logout handleClick={handleClick} />
       </div>
-      <div className="chat-messages"></div>
+      <div className="chat-messages">
+        {messages.map((message) => (
+          <div
+            className={`message ${
+              message.sender === currentUser.userId ? "sended" : "recieved"
+            }`}
+            key={message.messageId}
+          >
+            <div className="content">{message.message}</div>
+          </div>
+        ))}
+      </div>
       <ChatInput handleSendMessage={handleSendMessage} />
     </Container>
   );
@@ -116,7 +146,7 @@ const Container = styled.div`
         padding: 1rem;
         font-size: 1.1rem;
         border-radius: 1rem;
-        color: #d1d1d1;
+        color: #fff;
         @media screen and (min-width: 720px) and (max-width: 1080px) {
           max-width: 70%;
         }
@@ -125,13 +155,13 @@ const Container = styled.div`
     .sended {
       justify-content: flex-end;
       .content {
-        background-color: #4f04ff21;
+        background-color: #337785;
       }
     }
     .recieved {
       justify-content: flex-start;
       .content {
-        background-color: #9900ff20;
+        background-color: #5c929d;
       }
     }
   }
